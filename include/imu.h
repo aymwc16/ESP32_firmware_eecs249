@@ -1,15 +1,43 @@
-# ifndef __IMU_H__
-# define __IMU_H__
+/*
+ * Remote Feelings: Adam Curtis, Aymeric Wang, Xinying Hu
+ * 11/30/21
+ * Prototype version. Author: Aymeric Wang
+ */
 
-# ifndef __IMU_INIT__
-    # define __IMU_INIT__
-    # include "HardwareSerial.h"
-    # include <Adafruit_MPU6050.h>
-    # include <Adafruit_Sensor.h>
+# ifndef IMU_H
+# define IMU_H
+
+# ifndef IMU_INIT
+# define IMU_INIT
+# include "HardwareSerial.h"
+# include <Adafruit_MPU6050.h>
+# include <Adafruit_Sensor.h>
 # endif
 
-Adafruit_MPU6050 mpu;
+/* * * * * * * * * * * * * * * * * * *
+* @setup 
+* void setup() {
+*   Serial.begin(115200);
+*   while (!Serial);
+*   Serial.println("MPU6050 OLED demo");
+* 
+*   if (!mpu.begin()) {
+*     Serial.println("Sensor init failed");
+*     while (1)
+*       yield();
+*   }
+*   Serial.println("Found a MPU-6050 sensor");
+*   delay(500);
+* }
+* 
+* @loop
+* void loop() {
+*   Accel(Serial);
+*   delay(100);
+* }
+* * * * * * * * * * * * * * * * * * * */
 
+Adafruit_MPU6050 mpu;
 
 void Accel(HardwareSerial Serial) {
     sensors_event_t a, g, temp;
