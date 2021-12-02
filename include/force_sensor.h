@@ -8,13 +8,16 @@
 #define FORCE_SENSOR_H
 
 #include <Arduino.h>
+#include <math.h>
 
 
 #define FORCE_SENSOR_PIN 36
-#define RESISTANCE 43000.00
+#define RESISTANCE 5000.00
 #define VOLTAGE_INPUT_ESP32 3.0
 #define ESP32_ADC_RANGE 4095
 
+#define COEFF_FORCE_SENSOR_LAW 93.199
+#define EXP_FORCE_SENSOR_LAW 1.277
 
 /* * * * * * * * * * * * * * * * * *
 * Recommended settings of void setup()
@@ -38,10 +41,14 @@
 
 
 float bridgeDivider(float resistance, uint16_t ADC_measurement){
-    float voltage_measurement = (float) ADC_measurement/ESP32_ADC_RANGE*VOLTAGE_INPUT_ESP32;
-    return voltage_measurement*resistance/(VOLTAGE_INPUT_ESP32-voltage_measurement);
+  float voltage_measurement = (float) ADC_measurement/ESP32_ADC_RANGE*VOLTAGE_INPUT_ESP32;
+  return voltage_measurement*resistance/(VOLTAGE_INPUT_ESP32-voltage_measurement);
 }
 
+float resistanceToForce(float resistance, uint16_t ADC_measurement){
+  float force_resistance = bridgeDivider(resistance, ADC_measurement);
+  return(COEFF_FORCE_SENSOR_LAW*pow(resistance,EXP_FORCE_SENSOR_LAW-3));
+}
 
 void sending() {
   Serial.print("Are you listening?");
