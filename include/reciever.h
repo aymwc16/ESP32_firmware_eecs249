@@ -11,6 +11,8 @@
 #include <Wire.h>
 #include <string.h>
 
+#define MAX_TRANSM_DELAY 2000
+
 /* * * * * * * * * * * * * * * * * * *
 * @setup 
 * void setup() {
@@ -31,13 +33,24 @@
 
 
 int force_message_reciever(){
+    Serial.println("Listening to force messages...");
     char force_message[10];
     char character;
     char msg_delimiter_init[] = "<";
     char msg_delimiter_end[] = ">";
     int i = 0;
     int sPos5 = 0;
-    while (!Serial2.available()){}
+    int time;
+    int timer_init = millis();
+    while (!Serial2.available()){
+        Serial.println("Waiting for signal...");
+        time = millis();
+        if ((time-timer_init)>MAX_TRANSM_DELAY){
+            Serial.println("No signal recieved...");
+            return 0;
+        }
+        delay(250);
+    }
     while (Serial2.available()>0 && i<10){
         character = Serial2.read();
         if (character == msg_delimiter_init[0]){

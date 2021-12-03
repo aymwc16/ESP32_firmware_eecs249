@@ -29,4 +29,4 @@ If you want to use the force sensor: plug into `FF1`
 
 # To have both ESP32 communicating
 The sender is pluged on power outlet and flashed by pushing the ENG button (this program is flashed, it will remain permanent after upload)
-The reciever is pluged to the computer on microUSB. Monitoring will be done on this platform. 
+The reciever is pluged to the computer on microUSB. Monitoring will be assigned on this platform. 

@@ -12,6 +12,20 @@
 #include "sender.h"
 #include "reciever.h"
 
+/* * * * * * * * * * * * * * * * * * * *
+ * THIS MUST BE REMOVED AFTER TEST
+ * OF UART BETWEEN PINCHER AND GLOVE!!!
+ * * * * * * * * * * * * * * * * * * * */
+
+#define PLATFORM 1
+#if PLATFORM!=1 & PLATFORM!=2
+#error [ERROR] PLATFORM must be 1 or 2
+#endif
+/* * * * * * * *
+ * 1 = Pincher
+ * 2 = Glove
+ * * * * * * * */
+
 bool calibrated = false;
 int j = 1500;
 
@@ -44,9 +58,21 @@ void setup() {
 
 void loop() {
   int may_the_force_bwu;
+  long int local_force;
 
-  force_send(1600);
+  if (PLATFORM == 2){
+    for (unsigned int a = 0; a<5; a++){
+      local_force += analogRead(FFPins[a]);
+    }
+    local_force = int(local_force/5);
+  } 
+  else{
+    local_force = analogRead(FF1);
+  }
+
+
+  force_send(local_force);
   may_the_force_bwu = force_message_reciever();
   Serial.println();
-  delay(100);
+  delay(500);
 }
