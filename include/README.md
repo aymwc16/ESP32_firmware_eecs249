@@ -5,11 +5,14 @@ This directory is intended for project header files.
 
 ## include/ repo layout
 
-| Tables        | Are           | Cool |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+| Header file name  | Function | Optional? |
+| :---: | --- | :---: |
+| `adc_to_newtons.h` | Converts ADC measurements from servos to force | YES |
+| `calibration.h` | Integrates functions used for calibration + UI | NO |
+| `imu.h` | Allows to read IMU data | YES |
+| `pin_config.h` | Assign pin numbers for communication and command of servos | ABSOLUTELY NOT |
+| `reciever.h` | Has functions to read formatted messages from UART | NO |
+| `sender.h` | Has functions to send formatted messages to UART | NO |
 
 ## Some help on header files
 
