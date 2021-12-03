@@ -14,31 +14,64 @@
 Servo servo1, servo2, servo3, servo4, servo5;
 int force1, force2, force3, force4, force5;
 
-long int pinky_min, pinky_max, pinky_rest;
-int angle_range;
-
-int noisy_force;
-
+long int rest_force1, rest_force2, rest_force3, rest_force4, rest_force5;
+long int clench_force1, clench_force2, clench_force3, clench_force4, clench_force5;    
+long int flat_force1, flat_force2, flat_force3, flat_force4, flat_force5;
 
 using namespace std;
 
 
 void calibration(){
     delay(500);
+    int medium = int((MIN_PULSE_WIDTH+MAX_PULSE_WIDTH)/2);
+    for (int i=0;i<50;i++){
+        servo1.write(medium);
+        servo2.write(medium);
+        servo3.write(medium);
+        servo4.write(medium);
+        servo5.write(medium);
+
+        rest_force1 += analogRead(FF1);
+        rest_force2 += analogRead(FF2);
+        rest_force3 += analogRead(FF3);
+        rest_force4 += analogRead(FF4);
+        rest_force5 += analogRead(FF5);
+        Serial.println(rest_force1);
+        Serial.println(rest_force2);
+        Serial.println(rest_force3);
+        Serial.println(rest_force4);
+        Serial.println(rest_force5); 
+        delay(100);
+    }
+    rest_force1 = int(rest_force1/50);
+    rest_force2 = int(rest_force2/50);
+    rest_force3 = int(rest_force3/50);
+    rest_force4 = int(rest_force4/50);
+    rest_force5 = int(rest_force5/50);
+    delay(3000);
+
     Serial.println("Gently clench...");
-    float force = resistanceToForce(RESISTANCE,analogRead(FF1));
-    while (force<=RESISTIVE_FORCE_THRESHOLD){
-        servo1.write(MIN_PULSE_WIDTH);
-        force = resistanceToForce(RESISTANCE,analogRead(FF1));
-        Serial.println(force);
-        Serial.println(servo1.read());
+
+    for (int i=0;i<50;i++){
+        servo1.write(medium);
+        servo2.write(medium);
+        servo3.write(medium);
+        servo4.write(medium);
+        servo5.write(medium);
+
+        clench_force1 += analogRead(FF1);
+        clench_force2 += analogRead(FF2);
+        clench_force3 += analogRead(FF3);
+        clench_force4 += analogRead(FF4);
+        clench_force5 += analogRead(FF5);
+        delay(100);
     }
-    angle_range = 0;
-    while (force<=RESISTIVE_FORCE_THRESHOLD){
-        servo1.write(-MIN_PULSE_WIDTH);
-        angle_range += abs(servo1.read());
-        force = resistanceToForce(RESISTANCE,analogRead(FF1));
-    }
+    clench_force1 = int(clench_force1/50);
+    clench_force2 = int(clench_force2/50);
+    clench_force3 = int(clench_force3/50);
+    clench_force4 = int(clench_force4/50);
+    clench_force5 = int(clench_force5/50);
+
 }
 
 int delta_force(int measurement, int resting_force){
