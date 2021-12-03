@@ -9,6 +9,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <string.h>
 
 /* * * * * * * * * * * * * * * * * * *
 * @setup 
@@ -29,5 +30,34 @@
 * * * * * * * * * * * * * * * * * * * */
 
 int iter = 0;
+
+int force_message_reciever(){
+    char force[10];
+    char character;
+    char alpha;
+    int i = 0;
+    int sPos5 = 0;
+    while (Serial2.available()>0){
+        character = Serial2.read();
+        int result;
+        //Serial.print(string);
+
+        // UNDER CONSTRUCTION !!!
+        /*
+        if (character == "<"){}
+        else if (character[0] == ">"){
+            break;
+        }
+        else{
+            force[i] = character[0];
+            i++;
+        }
+        */
+    }
+
+    Serial.println(String("Force recieved:\t")+String(sPos5));
+    sPos5 = atoi(force);
+    return(sPos5);
+}
 
 #endif

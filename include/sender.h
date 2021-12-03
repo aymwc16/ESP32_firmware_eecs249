@@ -19,9 +19,15 @@
 * 
 * * * * * * * * * * * * * * * * * * * */
 
-void sending() {
-  Serial.print("Are you listening?");
+
+void message_send(String message){
+  Serial2.print(message);
   delay(200);
+}
+
+void force_send(int ADC_input) {
+  String force_string = String(ADC_input);
+  message_send(force_string);
 }
 
 #endif

@@ -7,8 +7,10 @@
 #include <ESP32Servo.h>
 #include <Arduino.h>
 #include "calibration.h"
-#include "haptic_feedback.h"
-#include "comm.h"
+#include "pin_config.h"
+#include "adc_to_newtons.h"
+#include "sender.h"
+#include "reciever.h"
 
 bool calibrated = false;
 int j = 1500;
@@ -26,10 +28,13 @@ void setup() {
     Servos[a].setPeriodHertz(50);
     Servos[a].attach(SPins[a], MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
   }
+
+  /*
   calibrated = confirmation(calibrated);
   if (calibrated){
     calibration();
   }
+  */
   
   Serial.println("Glove ready to work!");
   delay(200);
@@ -87,6 +92,7 @@ void loop() {
   servo5.write(1500);
   */
 
+  /*
   char force[10];
   int i = 0;
   int sPos5 = 0;
@@ -104,8 +110,11 @@ void loop() {
   }
 
   sPos5 = atoi(force);
-  Serial.println(sPos5);
+  Serial.println(sPos5);*/
   //delay(200);
 
+  int may_the_force;
+  force_send(300);
+  may_the_force = force_message_reciever();
   delay(100);
 }

@@ -39,7 +39,7 @@
 
 Adafruit_MPU6050 mpu;
 
-void Accel(HardwareSerial Serial) {
+void Accel() {
     sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
     Serial.print("Accel ");
@@ -56,7 +56,7 @@ void Accel(HardwareSerial Serial) {
     Serial.print(" m/s^2\n");
 }
 
-void Gyro(HardwareSerial Serial) {
+void Gyro() {
     sensors_event_t a, g, temp;
     mpu.getEvent(&a, &g, &temp);
     Serial.print("Gyro ");

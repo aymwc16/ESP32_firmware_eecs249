@@ -12,8 +12,8 @@
 #include <Arduino.h>
 #include <iostream>
 #include <list>
-#include "haptic_feedback.h"
-#include "force_sensor.h"
+#include "pin_config.h"
+#include "adc_to_newtons.h"
 
 #define RESISTIVE_FORCE_THRESHOLD 4
 #define DANGER_FORCE_THRESHOLD 8
@@ -55,11 +55,12 @@ void calibration(){
     for (int i=0;i<50;i++){
         for(unsigned int a = 0; a<5; a++){
             Servos[a].write(medium);
-            delay(20);
+            delay(2);
             int force = analogRead(FFPins[a]);
             Rest_array[a] += force;
             Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
         }
+        delay(100);
     }
     for(unsigned int a = 0; a<5; a++){
         long int rest = int(Rest_array[a]/50);
@@ -72,11 +73,12 @@ void calibration(){
     for (int i=0;i<50;i++){
         for(unsigned int a = 0; a<5; a++){
             Servos[a].write(medium);
-            delay(20);
+            delay(2);
             int force = analogRead(FFPins[a]);
             Clench_array[a] += force;
             Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
         }
+        delay(100);
     }
     for(unsigned int a = 0; a<5; a++){
         long int clench = Clench_array[a];

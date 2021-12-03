@@ -45,7 +45,7 @@ float voltageDivider(float resistance, uint16_t ADC_measurement){
   return voltage_measurement*resistance/(VOLTAGE_INPUT_ESP32-voltage_measurement);
 }
 
-float resistanceToForce(float resistance, uint16_t ADC_measurement){
+float ohmsToNewts(float resistance, uint16_t ADC_measurement){
   float force_resistance = voltageDivider(resistance, ADC_measurement);
   return(COEFF_FORCE_SENSOR_LAW*pow(force_resistance,EXP_FORCE_SENSOR_LAW-3));
 }
