@@ -46,7 +46,7 @@ int force_message_reciever(){
         Serial.println("Waiting for signal...");
         time = millis();
         if ((time-timer_init)>MAX_TRANSM_DELAY){
-            Serial.println("No signal recieved...");
+            Serial.println("No signal recieved... Check connectivity");
             return 0;
         }
         delay(250);
