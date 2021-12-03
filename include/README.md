@@ -1,5 +1,17 @@
-
 This directory is intended for project header files.
+
+
+
+
+## include/ repo layout
+
+| Tables        | Are           | Cool |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
+## Some help on header files
 
 A header file is a file containing C declarations and macro definitions
 to be shared between several project source files. You request the use of a

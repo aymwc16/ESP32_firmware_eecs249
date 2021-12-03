@@ -29,34 +29,31 @@
 * }
 * * * * * * * * * * * * * * * * * * * */
 
-int iter = 0;
 
 int force_message_reciever(){
-    char force[10];
+    char force_message[10];
     char character;
-    char alpha;
+    char msg_delimiter_init[] = "<";
+    char msg_delimiter_end[] = ">";
     int i = 0;
     int sPos5 = 0;
-    while (Serial2.available()>0){
+    while (!Serial2.available()){}
+    while (Serial2.available()>0 && i<10){
         character = Serial2.read();
-        int result;
-        //Serial.print(string);
-
-        // UNDER CONSTRUCTION !!!
-        /*
-        if (character == "<"){}
-        else if (character[0] == ">"){
+        if (character == msg_delimiter_init[0]){
+            i = 0;
+        }
+        else if (character == msg_delimiter_end[0]){
+            i = 0;
             break;
         }
         else{
-            force[i] = character[0];
+            force_message[i] = character;
             i++;
         }
-        */
     }
-
+    sPos5 = atoi(force_message);
     Serial.println(String("Force recieved:\t")+String(sPos5));
-    sPos5 = atoi(force);
     return(sPos5);
 }
 

@@ -29,7 +29,7 @@ void setup() {
     Servos[a].attach(SPins[a], MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
   }
 
-  /*
+  /***** DO NOT REMOVE THIS *****
   calibrated = confirmation(calibrated);
   if (calibrated){
     calibration();
@@ -40,81 +40,13 @@ void setup() {
   delay(200);
 }
 
-/*
-void loop() {
-  //calibrated = confirmation(calibrated);
-	delay(200);
-}
-*/
 
 
 void loop() {
-  /*
-  force1 = analogRead(FF1);
-  force2 = analogRead(FF2);
-  force3 = analogRead(FF3);
-  force4 = analogRead(FF4);
-  force5 = analogRead(FF5);
-  */
-  
-//	if(force1 > 220){ 
-//    j += ((force1 - 200)/20);
-//	} else if (force1 < 180) {
-//    j -= ((200 - force1)/20);
-//	}
+  int may_the_force_bwu;
 
-//  if(j>2000) j = 2000;
-//  if(j<1000) j = 1000;
-  //Serial2.println("F1");
-	
-  //Serial2.print(String(force1));
-  
-  
-  /*
-  Serial2.println("F2");
-  Serial2.println(force2);
-  Serial2.println("F3");
-  Serial2.println(force3);
-  Serial2.println("F4");
-  Serial2.println(force4);
-  Serial2.println("F5");
-  Serial2.println(force5);
-  */
-  //Serial.println(j);
-
-
-
-  /*
-  servo1.write(1500);
-  servo2.write(1500);
-  servo3.write(1500);
-  servo4.write(1500);
-  servo5.write(1500);
-  */
-
-  /*
-  char force[10];
-  int i = 0;
-  int sPos5 = 0;
-  while (!Serial2.available());
-  while (Serial2.available()>0){
-    char string = Serial2.read();
-    //Serial.print(string);
-    if (string == 0){
-      break;
-    }
-    else{
-      force[i] = string;
-      i++;
-    }
-  }
-
-  sPos5 = atoi(force);
-  Serial.println(sPos5);*/
-  //delay(200);
-
-  int may_the_force;
-  force_send(300);
-  may_the_force = force_message_reciever();
+  force_send(1600);
+  may_the_force_bwu = force_message_reciever();
+  Serial.println();
   delay(100);
 }

@@ -9,14 +9,8 @@
 
 #define INSTANCE 1
 
-#if INSTANCE == 1
-    #define RXp2 16
-    #define TXp2 17
-#endif
-#if INSTANCE == 2
-    #define RXp2 17
-    #define TXp2 16
-#endif
+#define RXp2 16
+#define TXp2 17
 
 #define FF1 36
 #define FF2 39

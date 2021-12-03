@@ -21,7 +21,10 @@
 
 
 void message_send(String message){
-  Serial2.print(message);
+  String formatted_message;
+  formatted_message ="<"+message+">";
+  Serial2.print(formatted_message);
+  Serial.println("I sent message:\t"+String(formatted_message));
   delay(200);
 }
 
