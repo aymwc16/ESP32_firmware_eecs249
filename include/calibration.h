@@ -1,3 +1,9 @@
+/*
+ * Remote Feelings: Adam Curtis, Aymeric Wang, Xinying Hu
+ * 11/30/21
+ * Prototype version. Author: Aymeric Wang
+ */
+
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
@@ -5,72 +11,77 @@
 #include <ESP32Servo.h>
 #include <Arduino.h>
 #include <iostream>
+#include <list>
 #include "haptic_feedback.h"
 #include "force_sensor.h"
 
 #define RESISTIVE_FORCE_THRESHOLD 4
 #define DANGER_FORCE_THRESHOLD 8
 
+/* * * * * * * * * * * * * * * * * * * * * *
+ * We define a series of global variables
+ * identified from 1 to 5. They each
+ * correspond to a servo motor on the
+ * glove. In this order:
+ *      1. is the little finger
+ *      2. is the ring finger
+ *      ... and so on ...
+ *      5. is the thumb
+ * * * * * * * * * * * * * * * * * * * * * */
+
+# define medium (int(MAX_PULSE_WIDTH+MIN_PULSE_WIDTH)/2)
+//int medium = int((MIN_PULSE_WIDTH+MAX_PULSE_WIDTH)/2);
+
 Servo servo1, servo2, servo3, servo4, servo5;
-int force1, force2, force3, force4, force5;
+int force1, force2, force3, force4, force5; //ADC force values
 
+//Force values used for calibration
+//Long ints avoid a int overflow over the 50-batch sampling
 long int rest_force1, rest_force2, rest_force3, rest_force4, rest_force5;
-long int clench_force1, clench_force2, clench_force3, clench_force4, clench_force5;    
-long int flat_force1, flat_force2, flat_force3, flat_force4, flat_force5;
+long int clench_force1, clench_force2, clench_force3, clench_force4, clench_force5;
 
-using namespace std;
+String Fingers[] = {"little", "ring", "middle", "index", "thumb"};
+Servo Servos[] = {servo1, servo2, servo3, servo4, servo5};
+long int Rest_array[] = {rest_force1,rest_force2,rest_force3,rest_force4,rest_force4,rest_force5};
+long int Clench_array[] = {clench_force1,clench_force2,clench_force3,clench_force4,clench_force4,clench_force5};
+int FFPins[] = {FF1,FF2,FF3,FF4,FF5};
+int SPins[] = {S1,S2,S3,S4,S5};
 
 
 void calibration(){
-    delay(500);
-    int medium = int((MIN_PULSE_WIDTH+MAX_PULSE_WIDTH)/2);
-    for (int i=0;i<50;i++){
-        servo1.write(medium);
-        servo2.write(medium);
-        servo3.write(medium);
-        servo4.write(medium);
-        servo5.write(medium);
+    Serial.println("Loose your hand...");
+    delay(1500);
 
-        rest_force1 += analogRead(FF1);
-        rest_force2 += analogRead(FF2);
-        rest_force3 += analogRead(FF3);
-        rest_force4 += analogRead(FF4);
-        rest_force5 += analogRead(FF5);
-        Serial.println(rest_force1);
-        Serial.println(rest_force2);
-        Serial.println(rest_force3);
-        Serial.println(rest_force4);
-        Serial.println(rest_force5); 
-        delay(100);
+    for (int i=0;i<50;i++){
+        for(unsigned int a = 0; a<5; a++){
+            Servos[a].write(medium);
+            delay(20);
+            int force = analogRead(FFPins[a]);
+            Rest_array[a] += force;
+            Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
+        }
     }
-    rest_force1 = int(rest_force1/50);
-    rest_force2 = int(rest_force2/50);
-    rest_force3 = int(rest_force3/50);
-    rest_force4 = int(rest_force4/50);
-    rest_force5 = int(rest_force5/50);
+    for(unsigned int a = 0; a<5; a++){
+        long int rest = int(Rest_array[a]/50);
+        Rest_array[a] = rest;
+    }
+    
+    Serial.println("GENTLY clench...");
     delay(3000);
 
-    Serial.println("Gently clench...");
-
     for (int i=0;i<50;i++){
-        servo1.write(medium);
-        servo2.write(medium);
-        servo3.write(medium);
-        servo4.write(medium);
-        servo5.write(medium);
-
-        clench_force1 += analogRead(FF1);
-        clench_force2 += analogRead(FF2);
-        clench_force3 += analogRead(FF3);
-        clench_force4 += analogRead(FF4);
-        clench_force5 += analogRead(FF5);
-        delay(100);
+        for(unsigned int a = 0; a<5; a++){
+            Servos[a].write(medium);
+            delay(20);
+            int force = analogRead(FFPins[a]);
+            Clench_array[a] += force;
+            Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
+        }
     }
-    clench_force1 = int(clench_force1/50);
-    clench_force2 = int(clench_force2/50);
-    clench_force3 = int(clench_force3/50);
-    clench_force4 = int(clench_force4/50);
-    clench_force5 = int(clench_force5/50);
+    for(unsigned int a = 0; a<5; a++){
+        long int clench = Clench_array[a];
+        Clench_array[a] = int(clench/50);
+    }
 
 }
 

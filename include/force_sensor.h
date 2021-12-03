@@ -40,19 +40,14 @@
 * * * * * * * * * * * * * * * * * * * */
 
 
-float bridgeDivider(float resistance, uint16_t ADC_measurement){
+float voltageDivider(float resistance, uint16_t ADC_measurement){
   float voltage_measurement = (float) ADC_measurement/ESP32_ADC_RANGE*VOLTAGE_INPUT_ESP32;
   return voltage_measurement*resistance/(VOLTAGE_INPUT_ESP32-voltage_measurement);
 }
 
 float resistanceToForce(float resistance, uint16_t ADC_measurement){
-  float force_resistance = bridgeDivider(resistance, ADC_measurement);
-  return(COEFF_FORCE_SENSOR_LAW*pow(resistance,EXP_FORCE_SENSOR_LAW-3));
-}
-
-void sending() {
-  Serial.print("Are you listening?");
-  delay(200);
+  float force_resistance = voltageDivider(resistance, ADC_measurement);
+  return(COEFF_FORCE_SENSOR_LAW*pow(force_resistance,EXP_FORCE_SENSOR_LAW-3));
 }
 
 #endif

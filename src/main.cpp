@@ -22,21 +22,13 @@ void setup() {
 	ESP32PWM::allocateTimer(2);
 	ESP32PWM::allocateTimer(3);
 
-  servo1.setPeriodHertz(50); 
-  servo2.setPeriodHertz(50);
-  servo3.setPeriodHertz(50);
-  servo4.setPeriodHertz(50);
-  servo5.setPeriodHertz(50);
-
-  servo1.attach(S1, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
-  servo2.attach(S2, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
-  servo3.attach(S3, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
-  servo4.attach(S4, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
-  servo5.attach(S5, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
-  
-  //calibrated = confirmation(calibrated);
+  for (int a = 0; a<5; a++){
+    Servos[a].setPeriodHertz(50);
+    Servos[a].attach(SPins[a], MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
+  }
+  calibrated = confirmation(calibrated);
   if (calibrated){
-    //calibration();
+    calibration();
   }
   
   Serial.println("Glove ready to work!");
@@ -97,16 +89,23 @@ void loop() {
 
   char force[10];
   int i = 0;
-  delay(50);
+  int sPos5 = 0;
   while (!Serial2.available());
   while (Serial2.available()>0){
     char string = Serial2.read();
-    force[i] = string;
-    i++;
+    //Serial.print(string);
+    if (string == 0){
+      break;
+    }
+    else{
+      force[i] = string;
+      i++;
+    }
   }
 
-  int sPos5 = atoi(force);
+  sPos5 = atoi(force);
   Serial.println(sPos5);
+  //delay(200);
 
   delay(100);
 }
