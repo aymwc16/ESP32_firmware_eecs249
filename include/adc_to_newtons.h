@@ -19,25 +19,25 @@
 #define COEFF_FORCE_SENSOR_LAW 93.199
 #define EXP_FORCE_SENSOR_LAW 1.277
 
-/* * * * * * * * * * * * * * * * * *
-* Recommended settings of void setup()
-* 
-* @setup 
-* void setup() {
-*   Serial.begin(115200);
-* }
-* 
-* @loop
-* void loop(){
-*     uint16_t analogReading = analogRead(FORCE_SENSOR_PIN);
-*     float resistance = bridgeDivider(RESISTANCE,analogReading);
-*     Serial.print("ADC:\t");
-*     Serial.print(analogReading);
-*     Serial.print("\t\tResistance:\t");
-*     Serial.println(resistance);
-*     delay(500);
-* }
-* * * * * * * * * * * * * * * * * * * */
+/** * * * * * * * * * * * * * * * * * *
+ * @brief Sample code for setup() and loop()
+ * 
+ * @setup 
+ * void setup() {
+ *   Serial.begin(115200);
+ * }
+ * 
+ * @loop
+ * void loop(){
+ *  uint16_t analogReading = analogRead(FORCE_SENSOR_PIN);
+ *  float resistance = bridgeDivider(RESISTANCE,analogReading);
+ *  Serial.print("ADC:\t");
+ *  Serial.print(analogReading);
+ *  Serial.print("\t\tResistance:\t");
+ *  Serial.println(resistance);
+ *  delay(500);
+ * }
+ * * * * * * * * * * * * * * * * * * * * */
 
 
 float voltageDivider(float resistance, uint16_t ADC_measurement){

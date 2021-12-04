@@ -8,7 +8,6 @@
 #include <Arduino.h>
 #include "calibration.h"
 #include "pin_config.h"
-#include "adc_to_newtons.h"
 #include "sender.h"
 #include "reciever.h"
 
@@ -21,6 +20,7 @@
 #if PLATFORM!=1 & PLATFORM!=2
 #error [ERROR] PLATFORM must be 1 or 2
 #endif
+
 /* * * * * * * *
  * 1 = Pincher
  * 2 = Glove
@@ -69,7 +69,6 @@ void loop() {
   else{
     local_force = analogRead(FF1);
   }
-
 
   force_send(local_force);
   may_the_force_bwu = force_message_reciever();

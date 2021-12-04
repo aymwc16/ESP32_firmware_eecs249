@@ -30,7 +30,6 @@
  * * * * * * * * * * * * * * * * * * * * * */
 
 # define medium (int(MAX_PULSE_WIDTH+MIN_PULSE_WIDTH)/2)
-//int medium = int((MIN_PULSE_WIDTH+MAX_PULSE_WIDTH)/2);
 
 Servo servo1, servo2, servo3, servo4, servo5;
 int force1, force2, force3, force4, force5; //ADC force values

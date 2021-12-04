@@ -14,27 +14,29 @@
 # include <Adafruit_Sensor.h>
 # endif
 
-/* * * * * * * * * * * * * * * * * * *
-* @setup 
-* void setup() {
-*   Serial.begin(115200);
-*   while (!Serial);
-*   Serial.println("MPU6050 OLED demo");
-* 
-*   if (!mpu.begin()) {
-*     Serial.println("Sensor init failed");
-*     while (1)
-*       yield();
-*   }
-*   Serial.println("Found a MPU-6050 sensor");
-*   delay(500);
-* }
-* 
-* @loop
-* void loop() {
-*   Accel(Serial);
-*   delay(100);
-* }
+/** * * * * * * * * * * * * * * * * * * * *
+ * @brief Sample code for setup() and loop()
+ * 
+ * @setup 
+ * void setup() {
+ *  Serial.begin(115200);
+ *  while (!Serial);
+ *  Serial.println("MPU6050 OLED demo");
+ * 
+ *  if (!mpu.begin()) {
+ *      Serial.println("Sensor init failed");
+ *      while (1)
+ *      yield();
+ *  }
+ *  Serial.println("Found a MPU-6050 sensor");
+ *  delay(500);
+ *  }
+ * 
+ * @loop
+ * void loop() {
+ *  Accel();
+ *  delay(100);
+ *  }
 * * * * * * * * * * * * * * * * * * * */
 
 Adafruit_MPU6050 mpu;
