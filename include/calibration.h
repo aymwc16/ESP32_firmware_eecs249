@@ -1,4 +1,4 @@
-/*
+/**
  * Remote Feelings: Adam Curtis, Aymeric Wang, Xinying Hu
  * 11/30/21
  * Prototype version. Author: Aymeric Wang
@@ -17,6 +17,7 @@
 
 #define RESISTIVE_FORCE_THRESHOLD 4
 #define DANGER_FORCE_THRESHOLD 8
+#define numOfFingers 5
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * We define a series of global variables
@@ -30,64 +31,131 @@
  * * * * * * * * * * * * * * * * * * * * * */
 
 # define medium (int(MAX_PULSE_WIDTH+MIN_PULSE_WIDTH)/2)
+# define samples 50
 
-Servo servo1, servo2, servo3, servo4, servo5;
-int force1, force2, force3, force4, force5; //ADC force values
+void setupServos();
+void driveServos();
 
-//Force values used for calibration
-//Long ints avoid a int overflow over the 50-batch sampling
-long int rest_force1, rest_force2, rest_force3, rest_force4, rest_force5;
-long int clench_force1, clench_force2, clench_force3, clench_force4, clench_force5;
-
+int servoPosition[] = {1000, 1000, 1000, 1000, 1000};
+int force[numOfFingers];
 String Fingers[] = {"little", "ring", "middle", "index", "thumb"};
-Servo Servos[] = {servo1, servo2, servo3, servo4, servo5};
-long int Rest_array[] = {rest_force1,rest_force2,rest_force3,rest_force4,rest_force4,rest_force5};
-long int Clench_array[] = {clench_force1,clench_force2,clench_force3,clench_force4,clench_force4,clench_force5};
+Servo Servos[numOfFingers];
+long int restForce[numOfFingers];
+long int clenchForce[numOfFingers];
+int forceRange[numOfFingers];
+float forceScaler[numOfFingers];
+//----------Pins---------------
 int FFPins[] = {FF1,FF2,FF3,FF4,FF5};
 int SPins[] = {S1,S2,S3,S4,S5};
+//-----------Incrementer-----------
+//int calibrationTracker = 0;
+
+//---------Tuners ------------
+int minimumRange = 50;
+float scalerTuner = 200;
 
 
 void calibration(){
-    Serial.println("Loose your hand...");
-    delay(1500);
+ 
+    for(int calibrationTracker = 0; calibrationTracker < numOfFingers; calibrationTracker++){
+        Serial.println("Relax your hand...");
+        delay(1500);
 
-    for (int i=0;i<50;i++){
-        for(unsigned int a = 0; a<5; a++){
-            Servos[a].write(medium);
+        for (int i=0; i < samples; i++){
+        
             delay(2);
-            int force = analogRead(FFPins[a]);
-            Rest_array[a] += force;
-            Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
+            int force = analogRead(FFPins[calibrationTracker]);
+            restForce[calibrationTracker] += force;
+            //Serial.println(String("ADC of ")+String(Fingers[calibrationTracker])+String(":\t")+String(force));
+            delay(50);
         }
-        delay(100);
-    }
-    for(unsigned int a = 0; a<5; a++){
-        long int rest = int(Rest_array[a]/50);
-        Rest_array[a] = rest;
-    }
+        restForce[calibrationTracker] = restForce[calibrationTracker]/samples;
+        Serial.println(restForce[calibrationTracker]);
     
-    Serial.println("GENTLY clench...");
-    delay(3000);
+        Servos[calibrationTracker].write(medium);
+        Serial.println("GENTLY clench...");
+        delay(1000);
 
-    for (int i=0;i<50;i++){
-        for(unsigned int a = 0; a<5; a++){
-            Servos[a].write(medium);
-            delay(2);
-            int force = analogRead(FFPins[a]);
-            Clench_array[a] += force;
-            Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
+        for (int i=0; i < samples; i++){
+            
+            int force = analogRead(FFPins[calibrationTracker]);
+            clenchForce[calibrationTracker] += force;
+            //Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
+            delay(50);
         }
-        delay(100);
+        clenchForce[calibrationTracker] = clenchForce[calibrationTracker]/samples;
+        Serial.println(clenchForce[calibrationTracker]);
+        
+        Servos[calibrationTracker].detach();
+        setupServos();
+        //calibrationTracker++;
     }
-    for(unsigned int a = 0; a<5; a++){
-        long int clench = Clench_array[a];
-        Clench_array[a] = int(clench/50);
-    }
-
 }
 
-int delta_force(int measurement, int resting_force){
-    return(measurement-resting_force);
+
+
+// void calibration(){
+//     Serial.println("Loose your hand...");
+//     delay(1500);
+
+//     for(int i = 0; i < numOfFingers; i++){
+//         sPos[i] = medium;
+//     }
+//     driveServos();
+
+//     for (int i=0; i < samples; i++){
+//         for(unsigned int a = 0; a<numOfFingers; a++){
+//             delay(2);
+//             int force = analogRead(FFPins[a]);
+//             restForce[a] += force;
+//             Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
+//         }
+//         delay(50);
+//     }
+//     for(unsigned int a = 0; a < numOfFingers; a++){
+//         restForce[a] = restForce[a]/samples;
+//         Serial.println(restForce[a]);
+//     }
+    
+//     Serial.println("GENTLY clench...");
+//     delay(1000);
+
+//     for (int i=0; i < samples; i++){
+//         for(unsigned int a = 0; a < numOfFingers; a++){
+//             delay(2);
+//             int force = analogRead(FFPins[a]);
+//             clenchForce[a] += force;
+//             Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
+//         }
+//         delay(100);
+//     }
+//     for(unsigned int a = 0; a < numOfFingers; a++){
+//         clenchForce[a] = clenchForce[a]/samples;
+//         Serial.println(clenchForce[a]);
+//     }
+
+// }
+
+void calcForceRange(){
+    for (int i = 0; i < numOfFingers; i++){
+        forceRange[i] = clenchForce[i] - restForce[i];
+        if(forceRange[i] < minimumRange){
+            Serial.print("Force range is too small on ");
+            Serial.println(Fingers[i]);
+            if(forceRange[i] < 0) Serial.println("It's less than zero...");
+            forceRange[i] = minimumRange;
+        }
+    }
+}
+
+void calcOffsetScaler(){
+    for(int i = 0; i < numOfFingers; i++){
+        forceScaler[i] = float(forceRange[i]) / scalerTuner;
+        Serial.print("Force Scaler for ");
+        Serial.print(Fingers[i]);
+        Serial.print(" is ");
+        Serial.println(forceScaler[i]);
+    }
 }
 
 
