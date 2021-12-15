@@ -14,8 +14,7 @@
 #include "constants.h"
 //#include "adc.h"
 
-int state = 'b'; //waiting
-int lastState = 'b'; //waiting
+
 int listSize = 100;
 bool calibrated = false;
 
@@ -25,7 +24,7 @@ void robotControl(){
    * sent but we disregard it. It's a bit dirty but it works!
    * */
   try {
-    Pos_offset = 10 + scaleFactor(); //Get force from robot and scales it
+    Pos_offset = 5 + scaleFactor(); //Get force from robot and scales it
     //followFingers();
     followFingersAverage();
     int average_position = averageFingerPos();
@@ -50,11 +49,8 @@ void setup() {
     }
   }
 
-  //---
-  pinMode(INA, OUTPUT);
-  pinMode(INB, OUTPUT);
-  pinMode(LOGOLED, OUTPUT);
 
+  //----Setting servos----
   setupServos();
   delay(200);
   calibrateForceZero();
@@ -63,24 +59,25 @@ void setup() {
 
 void loop() {
 
-
-  if (Serial.available() > 0) {
-    state = Serial.read();
-  }
-
   if (PLATFORM == 2){
     reference_forces_list_generator();
     robotControl();
-    //controller();
     for(int i = 0; i < 5; i++){
       forceAverage[i] = update_moving_average_value(avg_force[i], analogRead(FFPins[i]));
     }
+    int long bright_calculator = 0;
+    for(int i = 0; i < 5; i++){
+      bright_calculator += int((forceAverage[i]-restForce[i]));
+    }
+    bright_calculator = int(abs(bright_calculator)/5);
+    uint8_t brightness = int(abs(bright_calculator));
+    Serial.println(brightness);
+    analogWrite(LOGOLED,brightness);
   }
   else{
     int position_recieved = force_message_reciever();
     if (position_recieved!=0) {
       int adc_command = MIN_PULSE_WIDTH;
-      //double sum = ((position_recieved-1000)/1000);
       float alpha = (MAX_PULSE_WIDTH-MIN_PULSE_WIDTH)/1000;
       float sum = (position_recieved-1000);
       adc_command = adc_command + int(sum*alpha);
@@ -100,124 +97,6 @@ void loop() {
       forceAverage[0] = update_moving_average_value(avg_force[0], analogRead(FFPins[0]));
       long int local_force = forceAverage[0];
       send_control(local_force);
-    }
-  }
-}
-
-
-void controller() {
-  switch(state) {
-    
-    case 'a' : { // STOP!!
-      disableServos();
-      state = 'b';
-      Serial.println("Stopped");
-      break;
-    }
-    case 'b' : { //Waiting 
-      setupServos();
-      Serial.println("Waiting");
-      delay(1000);
-      lastState = state;
-      break;
-    }
-    case 'c' : { // Calibrate Glove
-      Serial.println("Calibrating Glove");
-      setupServos();
-      calibration();
-      setupServos();
-      delay(200);
-      calibrated = true;
-      state = 'b';
-      break;
-    }
-    case 'd' : { // Calculate Range
-      Serial.println("Calculating Force range");
-      calcForceRange();
-      calcOffsetScaler();
-      state = 'b';
-      break;
-    }
-    case 'e' : { // Free following 
-      followFingers();
-      //Serial.println("Following");
-      lastState = state;
-      break;
-    }
-    case 'f' : { // Robot Control
-     // Serial.println("controlling Robot");
-      //int timer = micros();
-      if (calibrated) {
-        robotControl();
-        lastState = state;
-      }
-      else {
-        Serial.println("Calibration required to launch program");
-        delay(1000);
-        state = 'b';
-      }
-      //Serial.println(micros() - timer);
-      break;
-    }
-    case 'p' : { // Increase Force
-      Serial.print("increasing force to ");
-      Pos_offset += 1;
-      Neg_offset += 1;
-      Serial.println(Pos_offset);
-      state = 'f';
-      break;
-    }
-    case ';' : { // Decrease Force
-      Serial.print("Decreasing force to ");
-      Pos_offset -= 1;
-      Neg_offset -= 1;
-      Serial.println(Pos_offset);
-      state = lastState;
-      break;
-    }
-    case 'i' : { // Increase Time Delay
-      delay_time += 10;
-      Serial.print("increasing time delay to ");
-      Serial.print(delay_time);
-      Serial.println(" microseconds");
-      state = lastState;;
-      break;
-    }  
-    case 'o' : { // Decrease Time Delay
-      delay_time -= 10;
-      if(delay_time < 11){
-        delay_time = 10;
-        Serial.println("Time delay is ~ Zero");
-      }
-      else {
-        Serial.print("decreasing time delay to ");
-        Serial.print(delay_time);
-        Serial.println(" microseconds");
-      }
-      state = lastState;;
-      break;
-    } 
-    case 'w' : { // Increasing speed
-      Serial.print("Increasing speed to ");
-      driveSpeed += 1;
-      Serial.println(driveSpeed);
-      state = lastState;
-      break;
-    }
-    case 's' : { // Decreasing speed
-      Serial.print("decreasing speed to ");
-      driveSpeed -= 1;
-      if(driveSpeed < 1){
-        driveSpeed = 0;
-        Serial.println("Zero drive speed");
-      }
-      Serial.println(driveSpeed);
-      state = lastState;
-      break;
-    }
-    default : { // Default Case
-      Serial.println("Invalid state");
-      state = 'a';
     }
   }
 }
