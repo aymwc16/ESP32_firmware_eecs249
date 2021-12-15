@@ -61,31 +61,6 @@ void driveServos(){
   }
 }
 
-// integral control to follow fingers
-// void followFingersIntegral(void){
-//   readForce();
-//   for(int i = 0; i < 5; i++){
-//     if(force[i] > (restForce[i] + Pos_offset)) {
-//       if(forward[i]){
-//           driveSpeed[i]++;
-//       } else {
-//           driveSpeed[i] = 0;
-//       }
-//       forward[i] = true;
-//       sPos[i] += driveSpeed[i];
-//     }
-//     if(force[i] < (restForce[i] - Neg_offset)) {
-//       if(!forward[i]){
-//           driveSpeed[i]++;
-//       } else {
-//           driveSpeed[i] = 0;
-//       }
-//       forward[i] = false;
-//       sPos[i] -= driveSpeed[i];
-//     }
-//   }
-//   driveServos();
-// }
 
 void followFingers(void){ //Working but performance not amazing
   readForce();
@@ -110,37 +85,11 @@ void followFingers(void){ //Working but performance not amazing
   driveServos();
 }
 
-// Proportional control to follow fingers
-// void followFingers(void){
-//   int maxSpeed = 5;
-//   readForce();
-//   for(int i = 0; i < 5; i++){
-//     if(force[i] > (restForce[i] + Pos_offset * forceScaler[i])) {
-//       int temp = sPos[i] + (force[i]- restForce[i])/Pos_offset;
-//       if (temp > (sPos[i] + maxSpeed)) temp = sPos[i] + maxSpeed;
-//       sPos[i] = temp;
-//     }
-//     if(force[i] < (restForce[i] - Neg_offset * forceScaler[i])) {
-//       int temp = sPos[i] - (restForce[i] - force[i])/Neg_offset;
-//       if (temp < (sPos[i] - maxSpeed)) temp = sPos[i] - maxSpeed;
-//       sPos[i] = temp;
-//     }
-
 
 void followFingersAverage(void){
   //int maxSpeed = 5;
   //readForce();
   for(int i = 0; i < 5; i++){
-    // if(forceAverage[i] > (restForce[i] + Pos_offset)) {
-    //   int temp = sPos[i] + (forceAverage[i]- restForce[i])/Pos_offset;
-    //   if (temp > (sPos[i] + driveSpeed)) temp = sPos[i] + driveSpeed;
-    //   sPos[i] = temp;
-    // }
-    // if(forceAverage[i] < (restForce[i] - Neg_offset)) {
-    //   int temp = sPos[i] - (restForce[i] - forceAverage[i])/Neg_offset;
-    //   if (temp < (sPos[i] - driveSpeed)) temp = sPos[i] - driveSpeed;
-    //   sPos[i] = temp;
-    // }
     if(forceAverage[i] > (restForce[i] + Pos_offset)) {
       servoPosition[i] += driveSpeed;
     }
@@ -152,51 +101,6 @@ void followFingersAverage(void){
   driveServos();
 }
 
-
-// void driveHackedServo(void){
- 
-// const int INB = 2;
-
-// int dutyCycle;
-// int dutyCycle1 = 0;
-// /* Setting PWM Properties */
-// const int PWMFreq = 10000; /* 10 KHz */
-// const int PWMChannel0 = 0;
-// const int PWMChannel1 = 1;
-// const int PWMResolution = 10;
-// const int MAX_DUTY_CYCLE = (int)(pow(2, PWMResolution) - 1);
-// void setup()
-// {  
-//   ledcSetup(PWMChannel0, PWMFreq, PWMResolution);
-//   ledcSetup(PWMChannel1, PWMFreq, PWMResolution);
-//   /* Attach the LED PWM Channel to the GPIO Pin */
-//   ledcAttachPin(LEDPin, PWMChannel0);
-//   ledcAttachPin(INB, PWMChannel1);
-  
-// }
-// void loop()
-// {
-//   if(dutyCycle1 < 1){
-//     dutyCycle1 = MAX_DUTY_CYCLE;
-//   } else dutyCycle1 = 0;
-  
-//   ledcWrite(PWMChannel1, dutyCycle1);
-//   /* Increasing the LED brightness with PWM */
-//   for(dutyCycle = 0; dutyCycle <= MAX_DUTY_CYCLE; dutyCycle++)
-//   {
-//     ledcWrite(PWMChannel0, dutyCycle);
-//     delay(3);
-//     //delayMicroseconds(100);
-//   }
-//       /* Decreasing the LED brightness with PWM */
-//   for(dutyCycle = MAX_DUTY_CYCLE; dutyCycle >= 0; dutyCycle--)
-//   {
-//     ledcWrite(PWMChannel0, dutyCycle);
-//     delay(3);
-//     //delayMicroseconds(100);
-//   }
-// }
-// }
 
 void driveHackedServoDeprecated(void){
 
@@ -225,19 +129,5 @@ digitalWrite(INA, LOW);
   }
 }
 
-//--------Function to close robot arm until it feels an object then open in a loop
-// int crunch(void){
-//   for(int i = 1300; i<2000; i++){
-//     sPos5 = i;
-//     readForce();
-//     printForce();
-//     if(force1 > 3000) {
-//       return 1;
-//     }
-//     driveServos();
-//     delay(2);
-//   }
-//   return 0;
-// }
 
 #endif

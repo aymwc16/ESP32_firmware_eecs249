@@ -13,37 +13,8 @@
 #include <iostream>
 #include <list>
 #include "pin_config.h"
-#include "adc_to_newtons.h"
+#include "constants.h"
 
-#define RESISTIVE_FORCE_THRESHOLD 4
-#define DANGER_FORCE_THRESHOLD 8
-#define numOfFingers 5
-
-/* * * * * * * * * * * * * * * * * * * * * *
- * We define a series of global variables
- * identified from 1 to 5. They each
- * correspond to a servo motor on the
- * glove. In this order:
- *      1. is the little finger
- *      2. is the ring finger
- *      ... and so on ...
- *      5. is the thumb
- * * * * * * * * * * * * * * * * * * * * * */
-
-# define medium (int(MAX_PULSE_WIDTH+MIN_PULSE_WIDTH)/2)
-# define samples 50
-
-void setupServos();
-void driveServos();
-
-int servoPosition[] = {1000, 1000, 1000, 1000, 1000};
-int force[numOfFingers];
-String Fingers[] = {"little", "ring", "middle", "index", "thumb"};
-Servo Servos[numOfFingers];
-long int restForce[numOfFingers];
-long int clenchForce[numOfFingers];
-int forceRange[numOfFingers];
-float forceScaler[numOfFingers];
 //----------Pins---------------
 int FFPins[] = {FF1,FF2,FF3,FF4,FF5};
 int SPins[] = {S1,S2,S3,S4,S5};
@@ -54,9 +25,35 @@ int SPins[] = {S1,S2,S3,S4,S5};
 int minimumRange = 50;
 float scalerTuner = 200;
 
+//---Force range measurements---
+int forceRange[numOfFingers];
+float forceScaler[numOfFingers];
 
+
+//-----Function prototypes-----
+void setupServos();
+void driveServos();
+
+// To use if you do not want calibration
+void reference_forces_list_generator(){
+    if (PLATFORM==2){
+        restForce[0] = long(2200);
+        restForce[1] = long(1200);
+        restForce[2] = long(1700);
+        restForce[3] = long(2200);
+        restForce[4] = long(2500);
+
+        clenchForce[0] = long(2600);
+        clenchForce[1] = long(2000);
+        clenchForce[2] = long(2400);
+        clenchForce[3] = long(2300);
+        clenchForce[4] = long(2600);
+    }
+}
+
+// To use for calibration
 void calibration(){
- 
+
     for(int calibrationTracker = 0; calibrationTracker < numOfFingers; calibrationTracker++){
         Serial.println("Relax your hand...");
         delay(1500);
@@ -92,50 +89,6 @@ void calibration(){
     }
 }
 
-
-
-// void calibration(){
-//     Serial.println("Loose your hand...");
-//     delay(1500);
-
-//     for(int i = 0; i < numOfFingers; i++){
-//         sPos[i] = medium;
-//     }
-//     driveServos();
-
-//     for (int i=0; i < samples; i++){
-//         for(unsigned int a = 0; a<numOfFingers; a++){
-//             delay(2);
-//             int force = analogRead(FFPins[a]);
-//             restForce[a] += force;
-//             Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
-//         }
-//         delay(50);
-//     }
-//     for(unsigned int a = 0; a < numOfFingers; a++){
-//         restForce[a] = restForce[a]/samples;
-//         Serial.println(restForce[a]);
-//     }
-    
-//     Serial.println("GENTLY clench...");
-//     delay(1000);
-
-//     for (int i=0; i < samples; i++){
-//         for(unsigned int a = 0; a < numOfFingers; a++){
-//             delay(2);
-//             int force = analogRead(FFPins[a]);
-//             clenchForce[a] += force;
-//             Serial.println(String("ADC of ")+String(Fingers[a])+String(":\t")+String(force));
-//         }
-//         delay(100);
-//     }
-//     for(unsigned int a = 0; a < numOfFingers; a++){
-//         clenchForce[a] = clenchForce[a]/samples;
-//         Serial.println(clenchForce[a]);
-//     }
-
-// }
-
 void calcForceRange(){
     for (int i = 0; i < numOfFingers; i++){
         forceRange[i] = clenchForce[i] - restForce[i];
@@ -157,7 +110,6 @@ void calcOffsetScaler(){
         Serial.println(forceScaler[i]);
     }
 }
-
 
 bool confirmation(bool calibrated){
     label1:

@@ -11,25 +11,13 @@
 #include "sender.h"
 #include "reciever.h"
 #include "MotionFuncs.h"
+#include "constants.h"
 //#include "adc.h"
 
 int state = 'b'; //waiting
 int lastState = 'b'; //waiting
 int listSize = 100;
 bool calibrated = false;
-
-#define MAXFORCE 3000
-
-#define PLATFORM 1
-#if PLATFORM!=1 & PLATFORM!=2
-#error [ERROR] PLATFORM must be 1 or 2
-#endif
-
-/* * * * * * * *
- * 1 = Pincher
- * 2 = Glove
- * * * * * * * */
-
 
 void robotControl(){
   /**a try-catch statement allows to deal with concurrent
@@ -81,7 +69,9 @@ void loop() {
   }
 
   if (PLATFORM == 2){
-    controller();
+    reference_forces_list_generator();
+    robotControl();
+    //controller();
     for(int i = 0; i < 5; i++){
       forceAverage[i] = update_moving_average_value(avg_force[i], analogRead(FFPins[i]));
     }
