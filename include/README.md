@@ -9,10 +9,13 @@ This directory is intended for project header files.
 | :---: | --- | :---: |
 | `adc_to_newtons.h` | Converts ADC measurements from servos to force | YES |
 | `calibration.h` | Integrates functions used for calibration + UI | NO |
+| `constants.h` | Constants used to encode finger types on the glove | NO |
 | `imu.h` | Allows to read IMU data | YES |
-| `pin_config.h` | Assign pin numbers for communication and command of servos | ABSOLUTELY NOT |
+| `pin_config.h` | Assigns pin numbers for communication and command of servos | ABSOLUTELY NOT |
 | `reciever.h` | Has functions to read formatted messages from UART | NO |
 | `sender.h` | Has functions to send formatted messages to UART | NO |
+| `MotionFuncs.h`| Defines functions for drivers and standard behavior | NO |
+| `MotionAvg.h`| Defines another control method (average simulating a derivative control) | YES |
 
 ## Some help on header files
 

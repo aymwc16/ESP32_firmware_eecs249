@@ -31,7 +31,6 @@ void message_send(String message){
   formatted_message ="<"+message+">";
   Serial2.print(formatted_message);
   Serial.println(formatted_message);
-  //Serial.println("I sent message:\t"+String(formatted_message));
 }
 
 void send_control(int gripper_control) {
